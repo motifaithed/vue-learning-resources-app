@@ -1,13 +1,17 @@
 <template>
   <base-card>
-    <base-button @click="setSelectedTab('stored-resources')" :mode="storedResBtnMode"
+    <base-button
+      @click="setSelectedTab('stored-resources')"
+      :mode="storedResBtnMode"
       >Stored Resources</base-button
     >
     <base-button @click="setSelectedTab('add-resource')" :mode="addResBtnMode"
       >Add Resource</base-button
     >
   </base-card>
-  <component :is="selectedTab"></component>
+  <keep-alive>
+    <component :is="selectedTab"></component>
+  </keep-alive>
 </template>
 <script>
 import StoredResources from './StoredResources.vue';
@@ -33,25 +37,30 @@ export default {
           description: 'search everything',
           link: 'https://www.google.com',
         },
-      ]
+      ],
     };
   },
-  provide(){
-    return{
-        resources: this.storedResources
-    }
+  provide() {
+    return {
+      resources: this.storedResources,
+      addResource: this.addResource,
+    };
   },
-  computed:{
-    storedResBtnMode(){
-      return  this.selectedTab === 'stored-resources' ? null : 'flat';    
+  computed: {
+    storedResBtnMode() {
+      return this.selectedTab === 'stored-resources' ? null : 'flat';
     },
-    addResBtnMode(){
-        return  this.selectedTab === 'add-resource' ? null : 'flat';
-    }
+    addResBtnMode() {
+      return this.selectedTab === 'add-resource' ? null : 'flat';
+    },
   },
   methods: {
     setSelectedTab(tab) {
       this.selectedTab = tab;
+    },
+    addResource(resource) {
+      this.storedResources.unshift(resource);
+      this.selectedTab = 'stored-resources';
     },
   },
 };
