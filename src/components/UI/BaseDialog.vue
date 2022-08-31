@@ -17,6 +17,7 @@
 <script>
 export default {
   props: ['title'],
+  emits:['confirmError']
 };
 </script>
 <style scoped>
