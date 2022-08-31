@@ -1,4 +1,11 @@
 <template>
+  <base-dialog v-if="!inputIsValid" title="Input Not Valid!" @confirmError="confirmError">
+    <p>Atleast one input is not valid.</p>
+    <p>Please check all input</p>
+    <template #actions>
+       <base-button @click="confirmError">Okay</base-button>
+    </template>
+  </base-dialog>
   <base-card>
     <form @submit.prevent="submitData">
       <div class="form-control">
@@ -7,11 +14,16 @@
       </div>
       <div class="form-control">
         <label for="description">Description</label>
-        <textarea name="description" id="description" row="3" ref="inputDescription"></textarea>
+        <textarea
+          name="description"
+          id="description"
+          row="3"
+          ref="inputDescription"
+        ></textarea>
       </div>
       <div class="form-control">
         <label for="link">Link</label>
-        <input type="url" name="link" id="link" ref="inputLink"/>
+        <input type="url" name="link" id="link" ref="inputLink" />
       </div>
       <div>
         <base-button type="submit">Submit</base-button>
@@ -20,25 +32,41 @@
   </base-card>
 </template>
 <script>
-    export default{
-        inject: ['addResource'],
-        methods:{
-            submitData(){
-                const enteredTitle = this.$refs.inputTitle.value;
-                const enteredDescription = this.$refs.inputDescription.value;
-                const enteredLink = this.$refs.inputLink.value;
+export default {
+  data() {
+    return {
+      inputIsValid: true,
+    };
+  },
+  inject: ['addResource'],
+  methods: {
+    submitData() {
+      const enteredTitle = this.$refs.inputTitle.value;
+      const enteredDescription = this.$refs.inputDescription.value;
+      const enteredLink = this.$refs.inputLink.value;
 
-                const resource = {
-                    id: new Date().toISOString(),
-                    title: enteredTitle,
-                    description: enteredDescription,
-                    link: enteredLink
-                }
+      if (
+        enteredTitle.trim() === '' ||
+        enteredDescription.trim() === '' ||
+        enteredLink.trim() === ''
+      ) {
+        this.inputIsValid = false;
+        return;
+      }
 
-                this.addResource(resource);
-        }
+      const resource = {
+        id: new Date().toISOString(),
+        title: enteredTitle,
+        description: enteredDescription,
+        link: enteredLink,
+      };
+      this.addResource(resource);
+    },
+    confirmError(){
+        this.inputIsValid = true;
     }
-}
+  },
+};
 </script>
 <style scoped>
 label {
